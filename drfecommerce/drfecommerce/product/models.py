@@ -54,18 +54,32 @@ class ProductLine(models.Model):
 
     order = OrderField(unique_for_field="product", blank=True)
 
-def clean_fields(self, exclude=None):
-    super().clean_fields(exclude)
+    def clean_fields(self, exclude=None):
+        super().clean_fields(exclude)
 
-   
-    if not self.product_id:
-        return
+        if not self.product_id:
+            return
 
-    qs = ProductLine.objects.filter(product=self.product)
+        qs = ProductLine.objects.filter(product=self.product)
 
-    for obj in qs:
-        if self.id != obj.id and self.order == obj.order:
-            raise ValueError("duplicate order value")
+        for obj in qs:
+            if self.id != obj.id and self.order == obj.order:
+                raise ValueError("duplicate order value")
 
     def __str__(self):
         return str(self.order)
+
+
+class ProductImage(models.Model):
+    name = models.CharField(max_length=100)
+    alternative_text = models.CharField(max_length=100)
+    url = models.ImageField(upload_to=None, default="test.jpg")
+
+    productline = models.ForeignKey(
+        ProductLine, on_delete=models.CASCADE, related_name="product_image"
+    )
+
+    order = models.PositiveIntegerField()
+
+    def __str__(self):
+        return str(self.url)
