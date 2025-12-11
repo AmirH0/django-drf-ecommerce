@@ -8,6 +8,7 @@ from drf_spectacular.utils import extend_schema, OpenApiParameter
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 from django.db import connection
+from django.db.models import Prefetch
 
 
 class CategoryView(viewsets.ViewSet):
@@ -36,7 +37,13 @@ class ProductView(
     mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet
 ):
     # queryset = Product.objects.all().select_related("category", "brand")
-    queryset = Product.objects.isactive().select_related("category", "brand")
+    queryset = (
+        Product.objects.isactive()
+        .select_related("category", "brand")
+        .prefetch_related(Prefetch("product_line"))
+        .prefetch_related(Prefetch("product_line__product_image"))
+    )
+    
     # queryset = Product.isactive.all().select_related("category", "brand")
 
     serializer_class = ProductSerializer

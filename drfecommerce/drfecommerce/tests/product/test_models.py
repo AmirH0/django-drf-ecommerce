@@ -1,9 +1,11 @@
 import pytest
 from django.core.checks import Error
 from drfecommerce.product.fields import OrderField
-from drfecommerce.product.models import Brand ,Product , ProductLine ,Category
+from drfecommerce.product.models import Brand, Product, ProductLine, Category
+
 # pytestmark = pytest.mark.django_db
 from django.db import models
+
 
 @pytest.mark.django_db
 class TestCategoryModel:
@@ -19,16 +21,17 @@ class TestBrandmodel:
 class TestProductModel:
     pass
 
+
 @pytest.mark.django_db
 def test_orderfield_assigns_incremental_values():
     # Create required foreign keys
     brand = Brand.objects.create(name="Brand A")
     category = Category.objects.create(name="Cat A")
-    
+
     # Create product (NOT NULL brand required)
     product = Product.objects.create(
         name="Test Product",
-        descripition="test", 
+        descripition="test",
         is_digital=False,
         slug="test-product",
         brand=brand,
@@ -62,3 +65,10 @@ def test_orderfield_assigns_incremental_values():
     assert pl1.order == 1
     assert pl2.order == 2
     assert pl3.order == 3
+
+
+# @pytest.mark.django_db
+# class TestProductImageModel:
+#     def test_str_method(self, product_image_factory):
+#         obj = product_image_factory(order = 1)
+#         assert obj.__str__() == "1"
